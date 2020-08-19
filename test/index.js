@@ -5,7 +5,8 @@ describe("m", function () {
   describe("l", function () {
     it("k", function () {
       let options = {
-        ignorePrefix: "_"
+        ignorePrefix: "_",
+        trimFileSuffix: true
       }
       let entries = new DynamicEntries(__dirname + "/assets/", "./assets", options);
       console.log(entries.getAllFiles())
