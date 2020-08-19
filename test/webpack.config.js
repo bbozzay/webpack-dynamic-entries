@@ -26,8 +26,9 @@ module.exports = {
       path: path.resolve(__dirname, "dist"),
       // filename: "[name].min.js",
       filename: (singleEntry) => {
-        // console.log("NNN", singleEntry)
-        return !singleEntry.chunk.name.includes(".scss") ? '[name].js' : '[name]--delete--.js';
+        console.log("NNN", singleEntry)
+
+        return !singleEntry.chunk.name.includes("scss") ? '[name].js' : '[name]--delete--.js';
         // return "[name].js"
       }
     },
