@@ -2,14 +2,16 @@ const fs = require("fs");
 const path = require("path");
 
 class DynamicEntries {
-  constructor(absolutePath, relativePath) {
+  constructor(absolutePath, relativePath, options) {
     // this.dir = dir;
     this.absolutePath = absolutePath;
     this.relativePath = relativePath;
 
     this.options = {
-      trimPath: "assets"
+      trimPath: "assets",
+      ignorePrefix: options && options.hasOwnProperty("ignorePrefix") ? options.ignorePrefix : false
     }
+
     this.dir = absolutePath;
     this.arrayOfFiles = fs.readdirSync(this.dir);
   }
@@ -36,7 +38,7 @@ class DynamicEntries {
         // Return the relative path and push that to the array instead of the absolute path
         // let relativePath = path.relative(__dirname, this.absolutePath) + dirPath.replace(this.absolutePath, "");
         let relativePath = dirPath.replace(this.absolutePath, "");
-        arrayOfFiles.push(this.relativePath + path.join(relativePath, "/", file));
+        file[0] != this.options.ignorePrefix ? arrayOfFiles.push(this.relativePath + path.join(relativePath, "/", file)) : false;
       }
     });
 
