@@ -9,7 +9,7 @@ class DynamicEntries {
 
     this.options = {
       trimPath: "assets",
-      trimExtension: true,
+      trimExtension: options && options.hasOwnProperty("trimExtension") ? options.trimExtension : false,
       ignorePrefix: options && options.hasOwnProperty("ignorePrefix") ? options.ignorePrefix : false
     }
 
@@ -51,7 +51,7 @@ class DynamicEntries {
   }
   cleanFileName(fileName) {
     if (this.options.trimExtension) {
-      return fileName.replace(".scss", "");
+      return fileName.replace(".min", "").replace(".scss", "").replace(".js", "");
     }
     return fileName
   }
