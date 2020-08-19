@@ -9,6 +9,7 @@ describe("m", function () {
       }
       let entries = new DynamicEntries(__dirname + "/assets/", "./assets", options);
       console.log(entries.getAllFiles())
+      console.log("final Object", entries.getFinalObject())
       // console.log(entries.assetFolder)
       // assert(entries.name == "test");
     });
