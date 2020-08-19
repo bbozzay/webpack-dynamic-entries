@@ -1,0 +1,19 @@
+{
+  "name": "webpack-dynamic-entries",
+  "version": "1.0.0",
+  "description": "Dynamically generate JS, style, and other asset entry points.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bbozzay/webpack-dynamic-entries.git"
+  },
+  "keywords": [
+    "webpack",
+    "node"
+  ],
+  "author": "Ben Bozzay",
+  "license": "ISC"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "webpack-dynamic-entries",
+  "version": "1.0.0",
+  "description": "Dynamically reference multiple JS, styles, and assets in your webpack entrypoint.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "nodemon --exec 'mocha'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bbozzay/webpack-dynamic-entries.git"
+  },
+  "keywords": [
+    "node",
+    "webpack"
+  ],
+  "author": "Ben Bozzay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bbozzay/webpack-dynamic-entries/issues"
+  },
+  "homepage": "https://github.com/bbozzay/webpack-dynamic-entries#readme",
+  "devDependencies": {
+    "mocha": "^8.1.1"
+  }
+}
