@@ -9,6 +9,7 @@ class DynamicEntries {
 
     this.options = {
       trimPath: "assets",
+      trimExtension: true,
       ignorePrefix: options && options.hasOwnProperty("ignorePrefix") ? options.ignorePrefix : false
     }
 
@@ -39,6 +40,7 @@ class DynamicEntries {
         // let relativePath = path.relative(__dirname, this.absolutePath) + dirPath.replace(this.absolutePath, "");
         let relativePath = dirPath.replace(this.absolutePath, "");
         file[0] != this.options.ignorePrefix ? (() => {
+          file = this.cleanFileName(file);
           let finalPath = this.relativePath + path.join(relativePath, "/", file)
           arrayOfFiles.push(finalPath);
         })(): false;
@@ -47,11 +49,18 @@ class DynamicEntries {
 
     return arrayOfFiles;
   }
+  cleanFileName(fileName) {
+    if (this.options.trimExtension) {
+      return fileName.replace(".scss", "");
+    }
+    return fileName
+  }
   getFinalObject() {
     let arrayOfFinalFiles = this.getAllFiles();
     let finalObject = {};
     for (let i = 0; i < arrayOfFinalFiles.length; i++) {
       finalObject[arrayOfFinalFiles[i]] = arrayOfFinalFiles[i];
+      
     }
     return finalObject;
   }

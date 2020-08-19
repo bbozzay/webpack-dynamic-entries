@@ -10,7 +10,7 @@ let e = new DynamicEntries(__dirname + "/assets", "./assets", {
     ignorePrefix: "_"
 });
 const wpEntries = e.getFinalObject()
-console.log("npm entries", wpEntries)
+// console.log("npm entries", wpEntries)
 
 ///// DYNAMIC ENTRIES /////
 // const entry = glob.sync("./assets/js/**/*.js")
@@ -44,8 +44,10 @@ module.exports = {
         new CleanWebpackPlugin(
           // paths to clean
           {
-            dry: true,
+            dry: false,
+            verbose: false,
             cleanOnceBeforeBuildPatterns: ['**/*'],
+            cleanAfterEveryBuildPatterns: ['**/*--delete--*'],
           }
         )
     ],
