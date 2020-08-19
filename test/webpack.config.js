@@ -7,7 +7,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { DynamicEntries } = require("webpack-dynamic-entries");
 
 let e = new DynamicEntries(__dirname + "/assets", "./assets", {
-    ignorePrefix: "_"
+    ignorePrefix: "_",
+    trimExtension: true
 });
 const wpEntries = e.getFinalObject()
 // console.log("npm entries", wpEntries)

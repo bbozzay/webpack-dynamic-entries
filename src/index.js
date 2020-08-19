@@ -40,7 +40,6 @@ class DynamicEntries {
         // let relativePath = path.relative(__dirname, this.absolutePath) + dirPath.replace(this.absolutePath, "");
         let relativePath = dirPath.replace(this.absolutePath, "");
         file[0] != this.options.ignorePrefix ? (() => {
-          file = this.cleanFileName(file);
           let finalPath = this.relativePath + path.join(relativePath, "/", file)
           arrayOfFiles.push(finalPath);
         })(): false;
@@ -59,8 +58,8 @@ class DynamicEntries {
     let arrayOfFinalFiles = this.getAllFiles();
     let finalObject = {};
     for (let i = 0; i < arrayOfFinalFiles.length; i++) {
-      finalObject[arrayOfFinalFiles[i]] = arrayOfFinalFiles[i];
-      
+      let name = this.cleanFileName(arrayOfFinalFiles[i]);
+      finalObject[name] = arrayOfFinalFiles[i];
     }
     return finalObject;
   }
