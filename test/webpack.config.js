@@ -1,5 +1,4 @@
 const path = require("path");
-const glob = require("glob");
 const devMode = process.env.NODE_ENV !== "production";
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
@@ -11,29 +10,20 @@ let e = new DynamicEntries(__dirname + "/assets", "./assets", {
     trimExtension: true
 });
 const wpEntries = e.getFinalObject()
-// console.log("npm entries", wpEntries)
 
 ///// DYNAMIC ENTRIES /////
-// const entry = glob.sync("./assets/js/**/*.js")
 // Return an array of filepaths to the selected assets
-// console.log("entries", entries());
 
 module.exports = {
-    // entry: entries(),
     entry: wpEntries,
-    // entry: "./assets/scss/main.scss",
     output: {
       path: path.resolve(__dirname, "dist"),
       // filename: "[name].min.js",
       filename: (singleEntry) => {
-        console.log("NNN", singleEntry)
 
         return !singleEntry.chunk.name.includes("scss") ? '[name].js' : '[name]--delete--.js';
         // return "[name].js"
       }
-    },
-    devServer: {
-        contentBase: "./dist",
     },
     plugins: [
         new MiniCssExtractPlugin({
