@@ -10,7 +10,8 @@ class DynamicEntries {
     this.options = {
       trimPath: "assets",
       trimExtension: options && options.hasOwnProperty("trimExtension") ? options.trimExtension : false,
-      ignorePrefix: options && options.hasOwnProperty("ignorePrefix") ? options.ignorePrefix : false
+      ignorePrefix: options && options.hasOwnProperty("ignorePrefix") ? options.ignorePrefix : false,
+      ignoreDirectories: ["fonts"]
     }
 
     this.dir = absolutePath;
@@ -59,7 +60,9 @@ class DynamicEntries {
     let finalObject = {};
     for (let i = 0; i < arrayOfFinalFiles.length; i++) {
       let name = this.cleanFileName(arrayOfFinalFiles[i]);
-      finalObject[name] = arrayOfFinalFiles[i];
+      if (!arrayOfFinalFiles[i].includes(this.options.ignoreDirectories)) {
+        finalObject[name] = arrayOfFinalFiles[i];
+      }
     }
     return finalObject;
   }
