@@ -7,7 +7,8 @@ const { DynamicEntries } = require("webpack-dynamic-entries");
 
 let e = new DynamicEntries(__dirname + "/assets", "./assets", {
     ignorePrefix: "_",
-    trimExtension: true
+    trimExtension: true,
+    cleanExtensions: [".woff", ".woff2"]
 });
 const wpEntries = e.getFinalObject()
 
@@ -94,7 +95,7 @@ module.exports = {
                 //     'file-loader',
                 // ],
                 options: {
-                    name: devMode ? '/fonts/[name]' : '/fonts/[name].[hash]',
+                    name: devMode ? '[name]' : '[name].[hash]',
                 }
             }
         ],

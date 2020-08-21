@@ -11,7 +11,8 @@ class DynamicEntries {
       trimPath: "assets",
       trimExtension: options && options.hasOwnProperty("trimExtension") ? options.trimExtension : false,
       ignorePrefix: options && options.hasOwnProperty("ignorePrefix") ? options.ignorePrefix : false,
-      ignoreDirectories: ["fonts"]
+      // ignoreDirectories: ["fonts"]
+      cleanExtensions: false
     }
 
     this.dir = absolutePath;
@@ -50,8 +51,15 @@ class DynamicEntries {
     return arrayOfFiles;
   }
   cleanFileName(fileName) {
+    let cleanExtensions = [".min", ".scss", ".js", ]
+    this.options.cleanExtensions ? cleanExtensions = [cleanExtensions, ...this.options.cleanExtensions] : false;
+
     if (this.options.trimExtension) {
-      return fileName.replace(".min", "").replace(".scss", "").replace(".js", "");
+      for (let i = 0; i < cleanExtensions.length; i++) {
+        fileName.replace(cleanExtensions[i], "");
+      }
+      // return fileName.replace(".min", "").replace(".scss", "").replace(".js", "");
+      return fileName
     }
     return fileName
   }
