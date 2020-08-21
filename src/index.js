@@ -23,43 +23,107 @@ class DynamicEntries {
       // Ignore files that end with
       ignoreSuffix: options && options.hasOwnProperty("ignoreSuffix") ? options.ignoreSuffix : false,
       // Ignore files in a specific directory
-      ignoreDirectory: options && options.hasOwnProperty("ignoreDirectory") ? options.ignoreDirectory : false,
+      skipDirectories: options && options.hasOwnProperty("skipDirectories") ? options.skipDirectories : false,
     }
 
     // this.dir = absolutePath;
     this.arrayOfFiles = fs.readdirSync(this.absolutePath);
   }
-  // get assetFolder() {
-  //   let pathArray = this.absolutePath.split("/");
-  //   pathArray = pathArray.filter(pathChunk => pathChunk !== '');
-  //   return pathArray[pathArray.length-1];
-  // }
+  skipFileName(fileName) {
+    function loopThroughOptions(optionArray, cb) {
+      for (let i = 0; i < optionArray.length; i++) {
+        let checkValue = optionArray[i];
+        cb(checkValue)
+      }
+    }
+    if (this.options.ignorePrefix) {
+      loopThroughOptions(this.options.ignorePrefix, (checkValue) => {
+        if (fileName.substr(0, checkValue.length) == checkValue) {
+          return fileName
+        }
+      });
+    }
+    if (this.options.ignoreSuffix) {
+      loopThroughOptions(this.options.ignoreSuffix, (checkValue) => {
+        if (fileName.substr(fileName.length, -checkValue.length) == checkValue) {
+          return fileName
+        }
+      });
+    }
+    return false;
+  }
+  skipDirectory(directory) {
+    if (this.options.skipDirectories) {
+        let skip = this.options.skipDirectories.filter(dir => {
+          let dirPath = dir;
+          return directory.includes(dirPath);
+        })
+      if (skip && skip.hasOwnProperty("length") && skip.length > 0) {
+        return directory
+      }
+    }
+    return false;
+  }
+  removeFromArrayOfFiles(file) {
+    // console.log("REMOVE FILE", file)
+    // console.log("array of FILE", this.arrayOfFiles, file)
+    let folderIndex = this.arrayOfFiles.indexOf(file);
+    this.arrayOfFiles.splice(folderIndex, 1);
+  }
+
+  get relativeDirectory() {
+    let dirPath = this.absolutePath;
+    return dirPath.replace(this.absolutePath, "")
+  }
+ 
+  // Just return files, not folders
   getAllFiles(dirPath = this.absolutePath, arrayOfFiles = this.arrayOfFiles) {
     let files = fs.readdirSync(dirPath);
-
     arrayOfFiles = arrayOfFiles || [];
+    let count = 0;
 
-    files.forEach((file) => {
+    while (count < files.length) {
+      let file = files[count];
+      let relativePath = this.relativeDirectory;
+      // console.log(file, fs.statSync(dirPath + "/" + file).isDirectory())
+      count++;
+
       if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-        // Remove folders from the array of files
-        arrayOfFiles.includes(file) ? (() => {
-          let folderIndex = arrayOfFiles.indexOf(file);
-          arrayOfFiles.splice(folderIndex, 1);
+        // Remove directories from the array of files
+        this.arrayOfFiles.includes(file) ? (() => {
+          this.removeFromArrayOfFiles(file);
         })() : false;
         // Recursion
-        arrayOfFiles = this.getAllFiles(dirPath + "/" + file, arrayOfFiles);
+        this.arrayOfFiles = this.getAllFiles(dirPath + "/" + file, this.arrayOfFiles);
       } else {
         // Return the relative path and push that to the array instead of the absolute path
         // let relativePath = path.relative(__dirname, this.absolutePath) + dirPath.replace(this.absolutePath, "");
-        let relativePath = dirPath.replace(this.absolutePath, "");
-        file[0] != this.options.ignorePrefix ? (() => {
-          let finalPath = this.relativePath + path.join(relativePath, "/", file)
-          arrayOfFiles.push(finalPath);
-        })(): false;
+        let finalPath = this.relativePath + path.join(relativePath, "/", file)
+        this.arrayOfFiles.push(finalPath);
       }
-    });
+    }
 
-    return arrayOfFiles;
+    return this.arrayOfFiles;
+  }
+
+  // Refine files based on user options
+  filterFiles() {
+    console.log("FILTER THIS", this.arrayOfFiles)
+    if (this.skipDirectory(this.relativeDirectory)) {
+    // console.log("FF", "rpath", relativePath, "file", file, "array of files", this.arrayOfFiles)
+      // this.removeFromArrayOfFiles(this.relativeDirectory)
+      // continue
+    }
+    let filteredFiles = this.arrayOfFiles.filter(file => {
+      let fileName = file.replace(this.relativePath + "/", "");
+      console.log("FILTERING", fileName)
+      let skipFile = false;
+      if (this.skipFileName(fileName)) {
+        // this.removeFromArrayOfFiles(file)
+        // continue
+      }
+    })
+    return this.arrayOfFiles;
   }
   cleanFileName(fileName) {
     // this.options.cleanExtensions ? cleanExtensions = [cleanExtensions, ...this.options.cleanExtensions] : false;
@@ -78,13 +142,6 @@ class DynamicEntries {
         fileName = fileName.replace(this.options.trimExtensions[i], "");
       }
     }
-    // if (this.options.trimExtension) {
-    //   for (let i = 0; i < cleanExtensions.length; i++) {
-    //     fileName = fileName.replace(cleanExtensions[i], "");
-    //   }
-    //   // return fileName.replace(".min", "").replace(".scss", "").replace(".js", "");
-    //   return fileName
-    // }
     return fileName
   }
   getFinalObject() {

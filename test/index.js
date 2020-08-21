@@ -52,4 +52,32 @@ describe("Options Set", function() {
       assert(!i.includes(".js"))
     }
   });
+  it("Skip file based on prefix", function() {
+    options.trimAnyExtension = true;
+    options.trimExtensions = false;
+    options.ignorePrefix = ["_", "-"];
+    let entries = new DynamicEntries(sourcePath, relativePath, options);
+    let allFiles = entries.getAllFiles();
+    let filterFiles = entries.filterFiles();
+    for (let i in allFiles) {
+      console.log("II", allFiles[i])
+      assert(!i.includes("_ignore"));
+    }
+    assert(entries.skipFileName("_Skip_file.css") == "_Skip_file.css");
+    assert(entries.skipFileName("dont_skip-file.css") == false);
+  });
+  // it("Skip Directories", function() {
+  //   options.trimAnyExtension = true;
+  //   options.trimExtensions = false;
+  //   // options.ignorePrefix = false;
+  //   options.skipDirectories = ["fonts"];
+  //   let entries = new DynamicEntries(sourcePath, relativePath, options);
+  //   let allFiles = entries.getAllFiles();
+  //   for (let i in allFiles) {
+  //     console.log("EE", allFiles[i])
+  //     assert(!allFiles[i].includes("fonts"));
+  //   }
+  //   // assert(entries.skipFile("_Skip_file.css") == "_Skip_file.css");
+  //   // assert(entries.skipFile("dont_skip-file.css") == false);
+  // });
 });
