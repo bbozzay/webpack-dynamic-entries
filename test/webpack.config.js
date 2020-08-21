@@ -3,14 +3,15 @@ const devMode = process.env.NODE_ENV !== "production";
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { DynamicEntries } = require("webpack-dynamic-entries");
+const { DynamicEntries } = require("../src/index");
 
 let e = new DynamicEntries(__dirname + "/assets", "./assets", {
     ignorePrefix: "_",
-    trimExtension: true,
-    cleanExtensions: [".woff", ".woff2"]
+    trimAnyExtension: true,
+    //cleanExtensions: [".woff", ".woff2"]
 });
 const wpEntries = e.getFinalObject()
+console.log("WP", wpEntries)
 
 ///// DYNAMIC ENTRIES /////
 // Return an array of filepaths to the selected assets
