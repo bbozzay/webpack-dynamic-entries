@@ -56,7 +56,7 @@ class DynamicEntries {
 
     if (this.options.trimExtension) {
       for (let i = 0; i < cleanExtensions.length; i++) {
-        fileName.replace(cleanExtensions[i], "");
+        fileName = fileName.replace(cleanExtensions[i], "");
       }
       // return fileName.replace(".min", "").replace(".scss", "").replace(".js", "");
       return fileName
