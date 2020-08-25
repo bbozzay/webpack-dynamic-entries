@@ -3,69 +3,46 @@ Creates dynamic entry points for JS, styles, and other assets for use with Webpa
 
 With [Webpack](https://webpack.js.org/guides/entry-advanced/), generating multiple files requires an entry object or array. 
 
-**Entry object**
-Generate an object for named paths.
+## Introduction to the Webpack Entry Property
+The entry property can be a string, array, or object. If a string or array of entry paths is used, one output file will be produced comprised of the paths defined in the entry array or string. If an object is used, bundled files will be produced for each entry property.
+
+Example manually defined entry object:
 ```
-// { name: 'path'}
 module.exports = {
   ...
   entry: {
-    home: './home.js',
-    about: './about.scss`,
-    account: './account.js',
+    bundle_css: ["./assets/scss/top_scss.scss", "./assets/scss/top_min_scss.min.scss"],
+    bundle_js: ["./assets/js/top_level.js"],
+    "./assets/test_bundle": ["./assets/js/top_level.js"],
   },
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].js
+  }
   ...
 ```
 
-**Entry Array**
+Based on the entry points, the following files are created:
 ```
-// [ 'path' ]
-module.exports = {
-  ...
-  entry: [ 
-    './home.js',
-    './about.scss`,
-    './account.js',
-  ],
-  ...
+dist
+├── assets
+│   └── test_bundle.min.js
+├── bundle_css.css
+├── bundle_css.min.js
+└── bundle_js.min.js
 ```
 
-Instead of manually defining the entry, you can use this plugin to dynamically generate this entry and customize the input.
-
-## Example Input/Output
-**Input**
-```
-scss/main.scss
-scss/components/content/inner_ad.scss
-scss/components/layout/footer.scss
-scss/components/layout/footer/_style1.scss
-scss/components/layout/footer/_style2.scss
-scss/components/layout/header.scss
-scss/pages/about.scss
-scss/pages/home.scss
-```
-
-**Output**
-```
-// Assuming your output path resolves to the dist directory
-// Assuming you ignore files starting with _
-// Assuming you prefer to trim file extensions and replace with your CSS/JS loader's file extensions
-/dist/scss/main
-/dist/scss/components/content/inner_ad
-/dist/scss/components/layout/footer
-/dist/scss/components/layout/header
-/dist/scss/pages/about
-/dist/scss/pages/home
-```
+# Dynamic Entry Generation
+Instead of manually defining the entry, you can use this plugin to dynamically generate this entry and customize the input and output. 
 
 ## Usage
-Include the class directly for further customization. 
+Include the class directly for further customization.
+1. Install the node module with `npm install --save-dev webpack-dynamic-entries`
+2. Include the plugin in the webpack 
 ```
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 dynamicEntries = new DynamicEntries(__dirname + "/assets", "./assets", {
-  ignorePrefix: "_",
-  trimExtension: true,
-  cleanExtensions: [".woff", ".woff2"]
+
 });
 ```
 
@@ -73,9 +50,28 @@ dynamicEntries = new DynamicEntries(__dirname + "/assets", "./assets", {
 
 #### Options
 
-`ignorePrefix`
-`trimExtension`
-`cleanExtension`
+
+### Skip Files
+Avoid outputting certain files.
+
+`skipFilesWithPrefix`: **array, default: ["_"]**
+Files starting with any string in this array.
+
+`skipFilesWithSuffix`: **array**
+Files ending with any string in this array. Example: `options.skipFilesWithSuffix: [".woff"]`
+
+`skipFilesInFolder`: **array**
+Files in a folder defined in this array. Example: `options.skipFilesInFolder: ["fonts"]`
+
+### Customized file names
+Apply patterns to customize file output names
+
+`trimAnyExtension`: **boolean, default: true**
+Removes any file extension from the `[name]`, like .min.js or .scss. This is useful if you add the required extension using the file-loader. Setting this to false risks outputting files with duplicate extensions (.js.js).
+
+`trimExtension`: **array**
+Removes any user-defined file extensions from the `[name]`. Useful if some file loaders set the output file extension, but other file loaders do not.
+Example: A JS file loader sets a .min.js file extension, so JS file extensions should be trimmed initially. `options.trimExtension: [".js"];`
 
 #### Methods
 

@@ -5,27 +5,33 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { DynamicEntries } = require("../src/index");
 
-let e = new DynamicEntries(__dirname + "/assets", "./assets", {
+let e = new DynamicEntries(__dirname + "/assets", {
     ignorePrefix: "_",
     trimAnyExtension: true,
     //cleanExtensions: [".woff", ".woff2"]
 });
-const wpEntries = e.getFinalObject()
-console.log("WP", wpEntries)
+// const wpEntries = e.getFinalObject()
+// console.log("WP", wpEntries)
 
 ///// DYNAMIC ENTRIES /////
 // Return an array of filepaths to the selected assets
 
 module.exports = {
-    entry: wpEntries,
+    // entry: wpEntries,
+    entry: {
+        bundle_css: ["./assets/scss/top_scss.scss", "./assets/scss/top_min_scss.min.scss"],
+        bundle_js: ["./assets/js/top_level.js"],
+        "./assets/test_bundle": ["./assets/js/top_level.js"]
+    },
     output: {
       path: path.resolve(__dirname, "dist"),
+      filename: "[name].min.js"
       // filename: "[name].min.js",
-      filename: (singleEntry) => {
+    //   filename: (singleEntry) => {
 
-        return !singleEntry.chunk.name.includes("scss") ? '[name].js' : '[name]--delete--.js';
-        // return "[name].js"
-      }
+    //     return !singleEntry.chunk.name.includes("scss") ? '[name].js' : '[name]--delete--.js';
+    //     // return "[name].js"
+    //   }
     },
     plugins: [
         new MiniCssExtractPlugin({

@@ -2,70 +2,57 @@ var assert = require("assert");
 const { DynamicEntries, dynamicEntriesArray, dynamicEntriesObject } = require("../src/index")
 
 describe("Defaults", function () {
-  it("Generate Array (no options)", function () {
-    let entries = dynamicEntriesArray(__dirname + "/assets/", "./assets1")
-    // Check array is populated
-    assert(entries.length > 3)
-    assert(Array.isArray(entries))
-    // Check if it's a string with a longer length, like a file path
-    assert(entries[0].length > 18)
-    // Check if suffix is not stripped
-    assert(entries[0].includes("."))
+  // No Filters Applied
+  let d_entries = new DynamicEntries(__dirname + "/assets/");
+  it("Get Directories", function () {
+    // Directories array shouldn't have any files 
+    console.log("Get Directories", d_entries.directories)
+    assert(d_entries.directories.length == 8)
   });
-  it("Generate Object (no options)", function () {
-    let entries = dynamicEntriesObject(__dirname + "/assets/", "./assets1")
-    assert(typeof entries == "object")
-    // Shouldn't be an array
-    assert(!entries[0])
-    // Check if is a longer string
-    assert(entries[Object.keys(entries)[0]].length > 18)
-    // Check if suffix is not stripped
-    assert(entries[Object.keys(entries)[0]].includes("."))
-    // assert(entries[0].length > 18)
+  it("Get Files", function() {
+    // Files array shouldn't have directories
+    // assert(d_entries.listAllFiles.length == 21)
   });
 });
 
-describe("Options Set", function() {
-  let sourcePath = __dirname + "/assets";
-  let relativePath = "./assets";
-  let options = {
-    // Trim any exension from the name
-    trimAnyExtension: true
-  }
-  it("Ignore prefix", function() {
-    let entries = dynamicEntriesObject(sourcePath, relativePath, options);
+describe("Skip Files", function() {
+
+  it("Skip Folder", function() {
+    let options = {
+      skipFilesInFolder: ["fonts"]
+    }
+    // let d_entries = new DynamicEntries(__dirname + "/assets/", options);
+    // console.log("DIRS", d_entries.listAllDirectories);
+    // let entries = dynamicEntriesObject(sourcePath, options);
       // console.log("ENTRIES", entries)
-    for (let i in entries) {
-      assert(!i.includes(".min"))
-      assert(!i.includes(".scss"))
-      assert(!i.includes(".js"))
-      assert(entries[i].includes("."))
-    }
+    // for (let i in entries) {
+      // assert(entries[i].includes("."))
+    // }
   });
-  it("Ignore only certain prefixes", function() {
-    options.trimAnyExtension = false;
-    options.trimExtensions = [".js", ".css"];
-    let entries = dynamicEntriesObject(sourcePath, relativePath, options);
-      // console.log("ENTRIES", entries)
-    for (let i in entries) {
-      assert(!i.includes(".css"))
-      assert(!i.includes(".js"))
-    }
-  });
-  it("Skip file based on prefix", function() {
-    options.trimAnyExtension = true;
-    options.trimExtensions = false;
-    options.ignorePrefix = ["_", "-"];
-    let entries = new DynamicEntries(sourcePath, relativePath, options);
-    let allFiles = entries.getAllFiles();
-    let filterFiles = entries.filterFiles();
-    for (let i in allFiles) {
-      console.log("II", allFiles[i])
-      assert(!i.includes("_ignore"));
-    }
-    assert(entries.skipFileName("_Skip_file.css") == "_Skip_file.css");
-    assert(entries.skipFileName("dont_skip-file.css") == false);
-  });
+  // it("Ignore only certain prefixes", function() {
+  //   options.trimAnyExtension = false;
+  //   options.trimExtensions = [".js", ".css"];
+  //   let entries = dynamicEntriesObject(sourcePath, relativePath, options);
+  //     // console.log("ENTRIES", entries)
+  //   for (let i in entries) {
+  //     assert(!i.includes(".css"))
+  //     assert(!i.includes(".js"))
+  //   }
+  // });
+  // it("Skip file based on prefix", function() {
+  //   options.trimAnyExtension = true;
+  //   options.trimExtensions = false;
+  //   options.ignorePrefix = ["_", "-"];
+  //   let entries = new DynamicEntries(sourcePath, relativePath, options);
+  //   let allFiles = entries.getAllFiles();
+  //   let filterFiles = entries.filterFiles();
+  //   for (let i in allFiles) {
+  //     console.log("II", allFiles[i])
+  //     assert(!i.includes("_ignore"));
+  //   }
+  //   assert(entries.skipFileName("_Skip_file.css") == "_Skip_file.css");
+  //   assert(entries.skipFileName("dont_skip-file.css") == false);
+  // });
   // it("Skip Directories", function() {
   //   options.trimAnyExtension = true;
   //   options.trimExtensions = false;
