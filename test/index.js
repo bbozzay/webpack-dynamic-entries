@@ -4,10 +4,11 @@ const { DynamicEntries, dynamicEntriesArray, dynamicEntriesObject } = require(".
 describe("Defaults", function () {
   // No Filters Applied
   let d_entries = new DynamicEntries(__dirname + "/assets/");
-  it("Get Directories", function () {
-    // Directories array shouldn't have any files 
-    console.log("Get Directories", d_entries.directories)
-    assert(d_entries.directories.length == 8)
+  it("Start", function () {
+    // Directories array shouldn't have any files
+    d_entries.start();
+    console.log("Class", d_entries)
+    //assert(d_entries.directories.length == 8)
   });
   it("Get Files", function() {
     // Files array shouldn't have directories

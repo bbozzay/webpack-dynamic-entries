@@ -10,6 +10,7 @@ let e = new DynamicEntries(__dirname + "/assets", {
     trimAnyExtension: true,
     //cleanExtensions: [".woff", ".woff2"]
 });
+e.start()
 // const wpEntries = e.getFinalObject()
 // console.log("WP", wpEntries)
 
@@ -17,12 +18,12 @@ let e = new DynamicEntries(__dirname + "/assets", {
 // Return an array of filepaths to the selected assets
 
 module.exports = {
-    // entry: wpEntries,
-    entry: {
-        bundle_css: ["./assets/scss/top_scss.scss", "./assets/scss/top_min_scss.min.scss"],
-        bundle_js: ["./assets/js/top_level.js"],
-        "./assets/test_bundle": ["./assets/js/top_level.js"]
-    },
+    entry: e._files,
+    //entry: {
+        //bundle_css: ["./assets/scss/top_scss.scss", "./assets/scss/top_min_scss.min.scss"],
+        //bundle_js: ["./assets/js/top_level.js"],
+        //"./assets/test_bundle": ["./assets/js/top_level.js"]
+    //},
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "[name].min.js"

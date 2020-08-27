@@ -28,7 +28,7 @@ class DynamicEntries {
       skipFilesWithSuffix: options && options.hasOwnProperty("skipFilesWithSuffix") ? options.skipFilesWithSuffix : [],
       // Ignore files in a specific directory
       skipFilesInFolder: options && options.hasOwnProperty("skipFilesInFolder") ? options.skipFilesInFolder : [],
-      
+
       //// CUSTOMIZE FILE NAMES ////
       // remove an extension like .scss from the file path
       // use this if you want to use a file loader to define the extension
@@ -40,8 +40,8 @@ class DynamicEntries {
     }
     this._allFilesAndFolders = fs.readdirSync(this.absolutePath);
 
-    this._folders = [];
-    this._files = [];
+    this._folders = {};
+    this._files = {};
     this._filesAndFolders = [];
 
     // Object with key: Array
@@ -61,9 +61,10 @@ class DynamicEntries {
   get folders() {
     return this._folders;
   }
-  set folders(folderName) {
+  addFolder(folderName, path, cb) {
   // is folder a name or path?
-    return this._folders.push(folderName)
+    this._folders[folderName] = path
+    cb(path, this.targetFiles(path))
   }
 
   // List all files, even the excluded ones
@@ -71,8 +72,9 @@ class DynamicEntries {
     return this._files;
   }
   // Add a file to the files array
-  set files(fileName) {
-    return this._files.push(fileName)
+  addFile(fileName, path, cb) {
+    this._files[fileName] = path
+    cb(path, null)
   }
 
   get filesAndFolders() {
@@ -88,8 +90,44 @@ class DynamicEntries {
   // Bundle files that match specific rules, like files in sub folders within a folder
   // Need to solve grouping files/folders
   // Just focus on creating that final object
-  filterFiles(dirPath = this.absolutePath, ) {
-    this.filesAndFolders 
+  start() {
+  	this.filterAll(this.absolutePath, this.targetFiles(this.absolutePath));
+  	return this
+  }
+
+	// Read the directory and return the files
+  targetFiles(dirPath) {
+  	return dirPath ? fs.readdirSync(dirPath) : false;
+  }
+
+  filterAll(dirPath, files) {
+  	console.log("FilterAll", dirPath)
+		let i = 0;
+
+		while (files && i < files.length) {
+			// Directory or file
+			let fileOrFolderName = files[i];
+			let thisPath = dirPath + fileOrFolderName;
+
+			console.log("ForF", thisPath)
+			console.log("ForF", fileOrFolderName, fs.statSync(thisPath).isDirectory())
+
+			if (fs.statSync(thisPath).isDirectory()) {
+				thisPath = createPathWithSlash(thisPath);
+				this.addFolder(fileOrFolderName, thisPath, this.filterAll.bind(this));
+			} else {
+				console.log("NN", dirPath, "name", fileOrFolderName)
+				this.addFile(fileOrFolderName, thisPath, this.filterAll.bind(this));
+			}
+
+
+			i++
+		}
+
+  	return this;
+  }
+  processFolder(folder) {
+
   }
   // Generate a list of files and directories based on the user provided absolute path and filters
   init(dirPath = this.absolutePath, arrayOfFiles = this._allFilesAndFolders, currentDirectory = null) {
@@ -115,7 +153,6 @@ class DynamicEntries {
         thisPath = createPathWithSlash(dirPath + fileName)
         arrayOfFiles = this.init(thisPath, arrayOfFiles, fileName);
       } else {
-
         arrayOfFiles.push(thisPath);
       }
         // Return the relative path and push that to the array instead of the absolute path
@@ -197,7 +234,7 @@ class DynamicEntries {
   //   let dirPath = this.absolutePath;
   //   return dirPath.replace(this.absolutePath, "")
   // }
- 
+
 
   // // Refine files based on user options
   // filterFiles() {
@@ -262,11 +299,11 @@ class DynamicEntries {
     // !currentDirectory ? this.listDirectories.push(newFolder) : (() => {
       // Find the existing directory, then nest the new folder under it
       // for (let folderKey in this.listDirectories) {
-      //   console.log("i", folderKey) 
-      //   if (folderKey == currentDirectory) { 
+      //   console.log("i", folderKey)
+      //   if (folderKey == currentDirectory) {
       //     console.log("MATCH", folderKey)
       //     this.listDirectoriesfolderKey[newFolder] = {}
-          
+
       //   }
       // }
     // })();
