@@ -43,10 +43,6 @@ class DynamicEntries {
 
     this._folders = {};
     this._files = {};
-    this._filesAndFolders = [];
-
-    // Object with key: Array
-    this._results = {};
 
     // Starting Array of All Files
     this.init(this.absolutePath, this._allFilesAndFolders);
