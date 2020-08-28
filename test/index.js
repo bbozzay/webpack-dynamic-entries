@@ -6,7 +6,8 @@ describe("Defaults", function () {
   let d_entries = new DynamicEntries(__dirname + "/assets/", {
 	skipFilesWithPrefix: ["_"],
 	skipFilesWithSuffix: [".scss"],
-	skipFilesInFolder: ["fonts"]
+	//skipFilesInFolder: ["fonts"]
+	//skipFilesInFolder: { "fonts": "test" }
   });
   it("Start", function () {
     // Directories array shouldn't have any files
