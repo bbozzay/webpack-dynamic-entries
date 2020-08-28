@@ -7,6 +7,7 @@ function createPathWithSlash(path) {
   return path;
 }
 
+
 class DynamicEntries {
   constructor(sourceAbsolutePath, options) {
     // Absolute reference to the entry files
@@ -63,6 +64,9 @@ class DynamicEntries {
   }
   addFolder(folderName, path, cb) {
   // is folder a name or path?
+    if (this.shouldSkip(folderName)) {
+      return
+    }
     this._folders[folderName] = path
     cb(path, this.targetFiles(path))
   }
@@ -73,6 +77,9 @@ class DynamicEntries {
   }
   // Add a file to the files array
   addFile(fileName, path, cb) {
+    if (this.shouldSkip(fileName)) {
+      return
+    }
     this._files[fileName] = path
     cb(path, null)
   }
@@ -82,6 +89,44 @@ class DynamicEntries {
   }
   set filesAndFolders(path) {
       return this._filesAndFolders.push(path)
+  }
+  shouldSkip(fileOrFolder) {
+    // helper
+    //console.log("SHOULD ___ SKIP", fileOrFolder)
+    let shouldSkip = false;
+    const loopThroughOptions = (optionArray, cb) => {
+      if (!optionArray || optionArray.length == 0) {
+        //return
+      }
+      for (let i = 0; i < optionArray.length; i++) {
+        let checkValue = optionArray[i];
+        cb(checkValue)
+      }
+    }
+
+      if (this.options.skipFilesWithPrefix) {
+        loopThroughOptions(this.options.skipFilesWithPrefix, (compareName) => {
+          if (fileOrFolder.substr(0, compareName.length) == compareName) {
+            //console.log("SKIP", fileOrFolder, compareName)
+            shouldSkip = true;
+          }
+        })
+      }
+      if (this.options.skipFilesWithSuffix) {
+          loopThroughOptions(this.options.skipFilesWithSuffix, (compareName) => {
+          if (fileOrFolder.substr(-compareName.length) == compareName) {
+            shouldSkip = true;
+          }
+        })
+      }
+      if (this.options.skipFilesInFolder) {
+          loopThroughOptions(this.options.skipFilesInFolder, (compareName) => {
+          if (fileOrFolder == compareName) {
+            shouldSkip = true;
+          }
+        })
+      }
+    return shouldSkip;
   }
 
 
@@ -100,23 +145,26 @@ class DynamicEntries {
   	return dirPath ? fs.readdirSync(dirPath) : false;
   }
 
+  getFileName(fileNameWithExtension) {
+    return fileNameWithExtension.replace(".min", "").replace(/\.[^/.]+$/, "")
+  }
+
   filterAll(dirPath, files) {
   	console.log("FilterAll", dirPath)
 		let i = 0;
 
 		while (files && i < files.length) {
-			// Directory or file
+			// Directory or file INCLUDING EXTENSION
 			let fileOrFolderName = files[i];
 			let thisPath = dirPath + fileOrFolderName;
 
-			console.log("ForF", thisPath)
-			console.log("ForF", fileOrFolderName, fs.statSync(thisPath).isDirectory())
+			//console.log("ForF", fileOrFolderName)
 
 			if (fs.statSync(thisPath).isDirectory()) {
 				thisPath = createPathWithSlash(thisPath);
 				this.addFolder(fileOrFolderName, thisPath, this.filterAll.bind(this));
 			} else {
-				console.log("NN", dirPath, "name", fileOrFolderName)
+				//console.log("NN", dirPath, "name", fileOrFolderName)
 				this.addFile(fileOrFolderName, thisPath, this.filterAll.bind(this));
 			}
 
@@ -140,7 +188,7 @@ class DynamicEntries {
     while (count < files.length) {
       let fileName = files[count];
       let thisPath = dirPath + fileName;
-      console.log("FF", fileName)
+      //console.log("FF", fileName)
       // console.log("thisPath", thisPath)
       // console.log(file, fs.statSync(dirPath + "/" + file).isDirectory())
       count++;
@@ -163,10 +211,6 @@ class DynamicEntries {
     return arrayOfFiles
   }
 
-  // skip(fileName, parentFolder, currentFolder) {
-  shouldSkip() {
-
-  }
   skip(thisPath, fileName, currentDirectory) {
     const loopThroughOptions = (optionArray, cb) => {
       for (let i = 0; i < optionArray.length; i++) {

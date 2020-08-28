@@ -3,7 +3,11 @@ const { DynamicEntries, dynamicEntriesArray, dynamicEntriesObject } = require(".
 
 describe("Defaults", function () {
   // No Filters Applied
-  let d_entries = new DynamicEntries(__dirname + "/assets/");
+  let d_entries = new DynamicEntries(__dirname + "/assets/", {
+	skipFilesWithPrefix: ["_"],
+	skipFilesWithSuffix: [".scss"],
+	skipFilesInFolder: ["fonts"]
+  });
   it("Start", function () {
     // Directories array shouldn't have any files
     d_entries.start();
