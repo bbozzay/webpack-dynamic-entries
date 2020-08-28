@@ -46,7 +46,7 @@ class DynamicEntries {
 
   }
   validate() {
-    let shouldBeArrays = ["skipFilesWithPrefix", "skipFilesWithSuffix", "skipFilesInFolder", "trimExtensions"]
+    let shouldBeArrays = ["skipFilesWithPrefix", "skipFilesWithSuffix", "skipFilesInFolder", "trimExtensions", "trimExtensions"]
     for (let i = 0; i < shouldBeArrays.length; i++) {
       let testValue = Array.isArray(this.options[shouldBeArrays[i]]);
       if (!testValue) {
@@ -59,6 +59,11 @@ class DynamicEntries {
       throw "option " + "trimAnyExtension" + " should be a boolean";
       return false
     }
+    let shouldBeString = this.options.startingPath;
+    if (typeof shouldBeString != "string") {
+    	throw "options " + "startingPath" + " should be a string"
+      return false
+		}
     return this
   }
 
@@ -108,11 +113,10 @@ class DynamicEntries {
   }
   shouldSkip(fileOrFolder) {
     // helper
-    //console.log("SHOULD ___ SKIP", fileOrFolder)
     let shouldSkip = false;
     const loopThroughOptions = (optionArray, cb) => {
       if (!optionArray || optionArray.length == 0) {
-        //return
+        return
       }
       for (let i = 0; i < optionArray.length; i++) {
         let checkValue = optionArray[i];
@@ -144,12 +148,6 @@ class DynamicEntries {
     return shouldSkip;
   }
 
-
-  // TODO:
-  // Simplify this to one function that generates the files based on skips, renames, etc.
-  // Bundle files that match specific rules, like files in sub folders within a folder
-  // Need to solve grouping files/folders
-  // Just focus on creating that final object
   start() {
   	this.filterAll(this.absolutePath, this.targetFiles(this.absolutePath));
   	return this
@@ -183,13 +181,10 @@ class DynamicEntries {
 			let fileOrFolderName = files[i];
 			let thisPath = dirPath + fileOrFolderName;
 
-			//console.log("ForF", fileOrFolderName)
-
 			if (fs.statSync(thisPath).isDirectory()) {
 				thisPath = createPathWithSlash(thisPath);
 				this.addFolder(fileOrFolderName, thisPath, this.filterAll.bind(this));
 			} else {
-				//console.log("NN", dirPath, "name", fileOrFolderName)
 				this.addFile(fileOrFolderName, thisPath, this.filterAll.bind(this));
 			}
 

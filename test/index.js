@@ -1,9 +1,9 @@
 var assert = require("assert");
-const { DynamicEntries, dynamicEntriesArray, dynamicEntriesObject } = require("../src/index")
+const { getDynamicEntries } = require("../src/index")
 
 describe("Defaults", function () {
   // No Filters Applied
-  let d_entries = new DynamicEntries(__dirname + "/assets/", {
+  __dirname + "/assets/", {
 	skipFilesWithPrefix: ["_"],
 	skipFilesWithSuffix: [".scss"],
 	//trimAnyExtension: true,
