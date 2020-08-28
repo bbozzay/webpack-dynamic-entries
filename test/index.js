@@ -3,23 +3,26 @@ const { getDynamicEntries } = require("../src/index")
 
 describe("Defaults", function () {
   // No Filters Applied
-  __dirname + "/assets/", {
-	skipFilesWithPrefix: ["_"],
-	skipFilesWithSuffix: [".scss"],
-	//trimAnyExtension: true,
-	trimExtensions: [".min.js"]
-	//skipFilesInFolder: ["fonts"]
-	//skipFilesInFolder: { "fonts": "test" }
-  });
-  it("Start", function () {
-    // Directories array shouldn't have any files
-    d_entries.start();
-    console.log("Class", d_entries)
-    //assert(d_entries.directories.length == 8)
-  });
-  it("Get Files", function() {
+  let entries = getDynamicEntries(__dirname + "/assets");
+  it("Outputs All Files", function() {
     // Files array shouldn't have directories
-    // assert(d_entries.listAllFiles.length == 21)
+    assert(Object.keys(entries).length == 21)
+  });
+  it("Name and path validation", function() {
+
+    for (let i in entries) {
+      let name = i;
+      let path = entries[i]
+      let trimmedPrefix = (string) => string.substr(-(string.length-2));
+      // Name should be a relative path
+      assert(name[0] == ".")
+      // file path and name should be included by default
+      assert(trimmedPrefix(name).includes("."))
+      assert(trimmedPrefix(path).includes("."))
+      // path should start with an absolute reference by default
+      assert(path[0] == "/")
+    }
+
   });
 });
 
