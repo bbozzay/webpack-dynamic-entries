@@ -16,10 +16,6 @@ class DynamicEntries {
     if (!this.absolutePath) {
       throw "Required path missing. First argument should be an absolute path to the source directory"
     }
-    //this.relativePath = destinationRelativePath;
-    // if (!this.relativePath) {
-    //   throw "Required relative target path missing. Second argument should be a relative path to the target directory"
-    // }
 
     this.options = {
       //// SKIP FILES ////
@@ -38,6 +34,8 @@ class DynamicEntries {
       // Array of extensions to remove. Trims a string from the end of the file name. Example, ['.js', '.min.js']
       trimExtensions: options && options.hasOwnProperty("trimExtensions") ? options.trimExtensions : [],
 
+			// Pathing
+			startingPath: options && options.hasOwnProperty("startingPath") ? options.startingPath : "./assets"
     }
     this._allFilesAndFolders = fs.readdirSync(this.absolutePath);
 
@@ -69,6 +67,11 @@ class DynamicEntries {
     this._absolutePath[this._absolutePath.length-1] == "/" ? cleanPath = this._absolutePath : cleanPath = this._absolutePath + "/";
     return cleanPath
   }
+	getRelativePath(targetPath) {
+		let fileName = targetPath.replace(this.absolutePath, "");
+		fileName = this.getFileName(fileName);
+		return this.options.startingPath + "/" + fileName
+	}
 
   // List all directories, even excluded ones
   get folders() {
@@ -92,7 +95,8 @@ class DynamicEntries {
     if (this.shouldSkip(fileName)) {
       return
     }
-    this._files[fileName] = path
+    let nameWithRelativePath = this.getRelativePath(path);
+    this._files[nameWithRelativePath] = path
     cb(path, null)
   }
 
@@ -119,7 +123,6 @@ class DynamicEntries {
       if (this.options.skipFilesWithPrefix) {
         loopThroughOptions(this.options.skipFilesWithPrefix, (compareName) => {
           if (fileOrFolder.substr(0, compareName.length) == compareName) {
-            //console.log("SKIP", fileOrFolder, compareName)
             shouldSkip = true;
           }
         })
@@ -158,11 +161,21 @@ class DynamicEntries {
   }
 
   getFileName(fileNameWithExtension) {
-    return fileNameWithExtension.replace(".min", "").replace(/\.[^/.]+$/, "")
+  	if (this.options.trimAnyExtension) {
+			return fileNameWithExtension.replace(".min", "").replace(/\.[^/.]+$/, "")
+		}
+		if (this.options.trimExtensions && this.options.trimExtensions.length > 0) {
+			let cleanFileName = fileNameWithExtension;
+			for (let i = 0; i < this.options.trimExtensions.length; i++) {
+				let extension = this.options.trimExtensions[i];
+				cleanFileName = cleanFileName.replace(extension, "");
+			}
+			return cleanFileName
+		}
+		return fileNameWithExtension
   }
 
   filterAll(dirPath, files) {
-  	console.log("FilterAll", dirPath)
 		let i = 0;
 
 		while (files && i < files.length) {
@@ -191,11 +204,13 @@ class DynamicEntries {
   }
 }
   // Generate a list of files and directories based on the user provided absolute path and filters
-const dynamicEntries = (absolutePath, options) => {
+const getDynamicEntries = (absolutePath, options) => {
   let entries = new DynamicEntries(absolutePath, options);
-  // return entries.getFinalObject();
+  entries.start();
+  return entries.files;
 }
 
 module.exports = {
-  DynamicEntries
+  DynamicEntries,
+  getDynamicEntries
 };

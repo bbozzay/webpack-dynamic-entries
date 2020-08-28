@@ -6,6 +6,8 @@ describe("Defaults", function () {
   let d_entries = new DynamicEntries(__dirname + "/assets/", {
 	skipFilesWithPrefix: ["_"],
 	skipFilesWithSuffix: [".scss"],
+	//trimAnyExtension: true,
+	trimExtensions: [".min.js"]
 	//skipFilesInFolder: ["fonts"]
 	//skipFilesInFolder: { "fonts": "test" }
   });

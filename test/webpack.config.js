@@ -3,22 +3,18 @@ const devMode = process.env.NODE_ENV !== "production";
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { DynamicEntries } = require("../src/index");
+const { getDynamicEntries } = require("../src/index");
 
-let e = new DynamicEntries(__dirname + "/assets", {
-    ignorePrefix: "_",
+let options = {
+    skipFilesWithPrefix: ["_", "-"],
+		skipFilesInFolder: ["fonts"],
     trimAnyExtension: true,
-    //cleanExtensions: [".woff", ".woff2"]
-});
-e.start()
-// const wpEntries = e.getFinalObject()
-// console.log("WP", wpEntries)
-
-///// DYNAMIC ENTRIES /////
-// Return an array of filepaths to the selected assets
+		startingPath: "./assets"
+}
+console.log(getDynamicEntries(__dirname + "/assets", options));
 
 module.exports = {
-    entry: e._files,
+		entry: getDynamicEntries(__dirname + "/assets", options),
     //entry: {
         //bundle_css: ["./assets/scss/top_scss.scss", "./assets/scss/top_min_scss.min.scss"],
         //bundle_js: ["./assets/js/top_level.js"],
@@ -26,13 +22,12 @@ module.exports = {
     //},
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: "[name].min.js"
+      //filename: "[name].min.js"
       // filename: "[name].min.js",
-    //   filename: (singleEntry) => {
-
-    //     return !singleEntry.chunk.name.includes("scss") ? '[name].js' : '[name]--delete--.js';
-    //     // return "[name].js"
-    //   }
+			filename: (singleEntry) => {
+				return !singleEntry.chunk.name.includes("scss") ? '[name].js' : '[name]--delete--.js';
+				//return "[name].js"
+			}
     },
     plugins: [
         new MiniCssExtractPlugin({
@@ -103,7 +98,7 @@ module.exports = {
                 //     'file-loader',
                 // ],
                 options: {
-                    name: devMode ? '[name]' : '[name].[hash]',
+                    name: devMode ? './fonts/[name]' : './fonts/[name].[hash]',
                 }
             }
         ],
