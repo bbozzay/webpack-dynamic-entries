@@ -20,7 +20,7 @@ class DynamicEntries {
     this.options = {
       //// SKIP FILES ////
       // files that start with...
-      skipFilesWithPrefix: options && options.hasOwnProperty("skipFilesWithPrefix") ? options.skipFilesWithPrefix : [],
+      skipFilesWithPrefix: options && options.hasOwnProperty("skipFilesWithPrefix") ? options.skipFilesWithPrefix : ["_"],
       // files that end with...
       skipFilesWithSuffix: options && options.hasOwnProperty("skipFilesWithSuffix") ? options.skipFilesWithSuffix : [],
       // Ignore files in a specific directory

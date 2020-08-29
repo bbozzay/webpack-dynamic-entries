@@ -1,6 +1,6 @@
 {
   "name": "webpack-dynamic-entries",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Dynamically generate JS, style, and other asset entry points.",
   "main": "index.js",
   "scripts": {
