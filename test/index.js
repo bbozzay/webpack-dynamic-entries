@@ -25,6 +25,16 @@ describe("Defaults", function () {
 
   });
 });
+describe("Custom Output", function() {
+  it("Assets", function() {
+    let options = {
+      skipFilesInFolder: ["fonts"],
+      startingPath: "."
+    }
+    let res = getDynamicEntries(__dirname + "/assets", options)
+    console.log("Paths without assets", res)
+  })
+})
 
 describe("Skip Files", function() {
 
