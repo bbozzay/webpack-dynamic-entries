@@ -76,6 +76,7 @@ Removes any file extension from the `[name]`, like .min.js or .scss. This is use
 `trimExtensions`: **array**
 Removes any user-defined file extensions from the `[name]`. Useful if some file loaders set the output file extension, but other file loaders do not.
 Example: `options.trimExtensions: [".js"];`
+Also `trimExtensions` can be use to replace extensions for example from scss to css example: `options.trimExtensions: [".scss|.css"];` and all files with the extension of `.scss` files will be replace for `.css` extension.
 
 ## Example
 
