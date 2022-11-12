@@ -164,10 +164,18 @@ class DynamicEntries {
 		}
 		if (this.options.trimExtensions && this.options.trimExtensions.length > 0) {
 			let cleanFileName = fileNameWithExtension;
-			for (let i = 0; i < this.options.trimExtensions.length; i++) {
+			      for (let i = 0; i < this.options.trimExtensions.length; i++) {
 				let extension = this.options.trimExtensions[i];
-				cleanFileName = cleanFileName.replace(extension, "");
-			}
+				const replacebable = extension.includes('|')
+
+				if(!replacebable) {
+				  cleanFileName = cleanFileName.replace(extension, "")
+				} else {
+				  const extensionArray = extension.split("|")
+				  console.log(array)
+				  cleanFileName = cleanFileName.replace(extensionArray[0], extensionArray[1])
+				}
+			      }
 			return cleanFileName
 		}
 		return fileNameWithExtension
