@@ -172,7 +172,6 @@ class DynamicEntries {
 				  cleanFileName = cleanFileName.replace(extension, "")
 				} else {
 				  const extensionArray = extension.split("|")
-				  console.log(array)
 				  cleanFileName = cleanFileName.replace(extensionArray[0], extensionArray[1])
 				}
 			      }
